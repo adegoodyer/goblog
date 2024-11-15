@@ -37,7 +37,7 @@ func ReadConfig(yamlPath string) (Config, error) {
 		RootPath:       "./sample",
 		TLSPort:        8443,
 		InsecurePort:   8080,
-		HTTPSRedirect:  true,
+		HTTPSRedirect:  false,
 		TLSKeyPath:     "",
 		TLSCertPath:    "",
 		CacheSizeBytes: 32 * 1024 * 1024, // 32 MB

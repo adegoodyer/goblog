@@ -1,107 +1,96 @@
-# GoBlog
+# Dev Readme
 
-A blogging platform written by a coder, for coders.
+![GitHub last commit](https://img.shields.io/github/last-commit/adegoodyer/goblog)
+![GitHub issues](https://img.shields.io/github/issues/adegoodyer/goblog)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/adegoodyer/goblog)
+![Docker Pulls](https://img.shields.io/docker/pulls/adegoodyer/goblog)
+![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/adegoodyer/goblog/latest)
+![License](https://img.shields.io/github/license/adegoodyer/goblog)
 
-If you want to see how it looks, go to my home page: [macias.info](http://macias.info)
+## Overview
+- fork of [mariomac/goblog](https://github.com/mariomac/goblog)
+- tried following along to [Grafana Beyla Docker Setup](https://grafana.com/docs/beyla/latest/setup/docker/) but was getting container error [issue #6](https://github.com/mariomac/goblog/issues/6)
+- PR raised [pull-request #7](https://github.com/mariomac/goblog/pull/7)
+- enhanced Dockerfile to use multi stage build [pull-request #8](https://github.com/mariomac/goblog/pull/8)
+- added security scan and SBOM
 
-## Building
+## Commands
+```bash
+# compile go
+go build -o bin/goblog ./src
 
+# execute binary
+./goblog
+
+# build container image
+d build -t adegoodyer/goblog:dev .
+
+# build container image (debug mode)
+d build -t adegoodyer/goblog:dev . --progress=plain
+
+# run container locally (insecure)
+docker run -p 8080:8080 --name goblog adegoodyer/goblog:dev
+
+# run container locally (tls)
+# need to change src/assets/install/config.go -> HTTPSRedirect to true
+# docker run -p 8443:8443 --name goblog adegoodyer/goblog:dev
+
+# sec scan
+grype adegoodyer/goblog:dev
+
+# generate SBOM
+syft adegoodyer/goblog:dev
+
+# publish image
+d logout && d login --username=adegoodyer
+d push adegoodyer/goblog --all-tags
 ```
-make compile
-```
-or
-```
-go build -o goblog ./src
-```
 
-## Running sample
-
-```
-make sample
+## Sec Scan
+```bash
+NAME        INSTALLED  FIXED-IN  TYPE  VULNERABILITY  SEVERITY
+libcrypto3  3.3.2-r0   3.3.2-r1  apk   CVE-2024-9143  Medium
+libssl3     3.3.2-r0   3.3.2-r1  apk   CVE-2024-9143  Medium
 ```
 
-or
-
+## SBOM
 ```
-./goblog -cfg /path/to/goblog/config.yml
+AME                                      VERSION                             TYPE
+alpine-baselayout                         3.6.5-r0                            apk
+alpine-baselayout-data                    3.6.5-r0                            apk
+alpine-keys                               2.4-r1                              apk
+apk-tools                                 2.14.4-r0                           apk
+busybox                                   1.36.1-r29                          apk
+busybox-binsh                             1.36.1-r29                          apk
+ca-certificates-bundle                    20240705-r0                         apk
+github.com/alecthomas/chroma/v2           v2.2.0                              go-module
+github.com/caarlos0/env/v6                v6.10.1                             go-module
+github.com/dlclark/regexp2                v1.7.0                              go-module
+github.com/fsnotify/fsnotify              v1.7.0                              go-module
+github.com/mariomac/goblog                (devel)                             go-module
+github.com/mariomac/guara                 v0.0.0-20221222112709-f95b15506aee  go-module
+github.com/yuin/goldmark                  v1.7.4                              go-module
+github.com/yuin/goldmark-highlighting/v2  v2.0.0-20230729083705-37449abec8cc  go-module
+golang.org/x/net                          v0.29.0                             go-module
+golang.org/x/sys                          v0.25.0                             go-module
+golang.org/x/tools                        v0.25.0                             go-module
+gopkg.in/yaml.v2                          v2.4.0                              go-module
+libcrypto3                                3.3.2-r0                            apk
+libssl3                                   3.3.2-r0                            apk
+musl                                      1.2.5-r0                            apk
+musl-utils                                1.2.5-r0                            apk
+scanelf                                   1.3.7-r2                            apk
+ssl_client                                1.36.1-r29                          apk
+stdlib                                    go1.23.3                            go-module
+zlib                                      1.3.1-r1                            apk
 ```
 
-If you want to run a local copy of [my own blog at macias.info](https://macias.info), you can run:
+## Acknowledgments
 
-```
-GOBLOG_ROOT=./etc/macias.info make sample
-```
+- [mariomac/goblog](https://github.com/mariomac/goblog)
+- [Syft](https://github.com/anchore/syft)
+- [Grype](https://github.com/anchore/grype)
 
-## Configuring
+## License
 
-Default configuration can be overridden by a YAML file config and/or Environment variables.
-
-The YAML file config path must be passed by the `-cfg` command-line argument or the `GOBLOG_CONFIG`
-environment variable.
-
-Environment variables take precedence over YAML configuration.
-
-* env: `GOBLOG_ROOT`, yaml: `rootPath`
-  * The root folder of the blog contents (see [Blog Structure](#blog-structure))
-  * Default: `./sample`
-* env: `GOBLOG_HTTPS_PORT`, yaml: `httpsPort`
-  * Port to serve the secure HTTPS content. If set to <0, HTTPS will be disabled.
-  * Default: `8443`
-* env: `GOBLOG_HTTP_PORT`, yaml: `httpPort`
-  * Port to listen for any HTTP request. If set to <0, HTTP will be disabled.
-  * Default: `8080`
-* env: `GOBLOG_HTTPS_REDIRECT`, yaml: `httpsRedirect`
-  * If set to `true`, any HTTP request will be redirected to HTTPS. If set to `false`, content is served
-    directed in an insecure port.
-  * Default: `true`
-* env: `GOBLOG_DOMAIN`, yaml: `domain`
-  * Domain/hostname/IP where the blog is going to be visible from
-  * Default: `localhost`
-* env: `GOBLOG_TLS_CERT`, yaml: `tlsCertPath`
-* env: `GOBLOG_TLS_KEY`, yaml: `tlsKeyPath`
-  * Paths of the TLS certificate and key for HTTPS serving
-  * Default: empty
-* env: `GOBLOG_CACHE_SIZE_BYTES`, yaml:`cacheSizeBytes`
-  * Size, in bytes, of the HTTP cache to minimize disk loads and template renderings
-  * Default: 32MB
-
-TODO: explain `redirect` map in yaml.
-
-## Blog Structure
-
-The `sample` folder contains a simplified example of the Root contents for a blog. You can override
-the `GOBLOG_ROOT` environment variable to point the root to another folder.
-
-The Root contents folders is structured as follows:
-
-* `entries` subfolder contains MarkDown entries for each entry of the blog.
-    * Entries whose file name starts with a timestamp `YYYYMMDDHHMMname.md` will be automatically added to the
-      index.
-
-    * Entries whose file name starts with other pattern will be treated as pages, and will need to link
-      them manually in the template or another entry.
-
-* `static` subfolder contains static assets (CSS, images, Javascript files...)
-
-* `template` contains the HTML templates in the Golang templating format.
-    * The template MUST contain at least two files: `index.html` for the main index page, and
-      `entry.html` for the blog entry page.
-
-## How to create your blog
-
-Put static assets in `static/` folder. They will be accessible through the `/static/` URL path.
-
-Put blog entries in `entries/` folder as MarkDown documents. They will be accessible through the
-`/entry/` URL path (without extension).
-
-Edit blog template files under the `template/` folder.
-
-## How to add an entry to your blog
-
-Just add a file in the `entries/` folder in a timestamped format. E.g. `201711281330_hello.md`
-will create an entry created at November 28th, 2017 at 13:30.
-
-The markdown file MUST contain a First-level header (e.g. `# Post title`), that will be used
-as title of the entry in the entry heading and links.
-
-At this early stage of the blog, you *MUST* restart the blog process before changes are visible.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

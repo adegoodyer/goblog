@@ -9,3 +9,5 @@ coverage.xml
 
 bin/
 goblog
+
+.vscode
