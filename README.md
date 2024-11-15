@@ -1,5 +1,3 @@
-# Dev Readme
-
 ![GitHub last commit](https://img.shields.io/github/last-commit/adegoodyer/goblog)
 ![GitHub issues](https://img.shields.io/github/issues/adegoodyer/goblog)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/adegoodyer/goblog)
