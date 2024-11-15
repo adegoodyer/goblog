@@ -2,7 +2,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/adegoodyer/goblog)
 ![GitHub pull requests](https://img.shields.io/github/issues-pr/adegoodyer/goblog)
 ![Docker Pulls](https://img.shields.io/docker/pulls/adegoodyer/goblog)
-![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/adegoodyer/goblog/latest)
+![Docker Image Size (latest by date)](https://img.shields.io/docker/image-size/adegoodyer/goblog/dev)
 ![License](https://img.shields.io/github/license/adegoodyer/goblog)
 
 ## Overview
