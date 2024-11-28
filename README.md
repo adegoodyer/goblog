@@ -41,10 +41,10 @@ d run -p 8080:8080 --name goblog ghcr.io/adegoodyer/goblog:dev
 d build -t ghcr.io/adegoodyer/goblog:v0.0.1 -t ghcr.io/adegoodyer/goblog:latest .
 
 # sec scan
-grype ghcr.io/adegoodyer/goblog:dev
+grype ghcr.io/adegoodyer/goblog:latest
 
 # generate sbom
-syft ghcr.io/adegoodyer/goblog:dev
+syft ghcr.io/adegoodyer/goblog:latest
 
 # create PAT
 # Profile > Settings > Developer Settings (right at bottom) > PAT
