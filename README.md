@@ -20,28 +20,48 @@ go build -o bin/goblog ./src
 # execute binary
 ./goblog
 
-# build container image
-d build -t adegoodyer/goblog:dev .
+# create dockerfile
 
-# build container image (debug mode)
-d build -t adegoodyer/goblog:dev . --progress=plain
+# add labels to link container repo to code repo
+LABEL org.opencontainers.image.source=https://github.com/adegoodyer/goblog
+LABEL org.opencontainers.image.description="Simplest blog engine for coders"
+LABEL org.opencontainers.image.licenses=MIT
 
-# run container locally (insecure)
-docker run -p 8080:8080 --name goblog adegoodyer/goblog:dev
+# build dev container image (single tag)
+d build -t ghcr.io/adegoodyer/goblog:dev .
 
-# run container locally (tls)
-# need to change src/assets/install/config.go -> HTTPSRedirect to true
-# docker run -p 8443:8443 --name goblog adegoodyer/goblog:dev
+# list images
+d image ls
+
+# run container locally
+d run -p 8080:8080 --name goblog ghcr.io/adegoodyer/goblog:dev
+# http://localhost:8080
+
+# build prod container image (multiple tags)
+d build -t ghcr.io/adegoodyer/goblog:v0.0.1 -t ghcr.io/adegoodyer/goblog:latest .
 
 # sec scan
-grype adegoodyer/goblog:dev
+grype ghcr.io/adegoodyer/goblog:dev
 
-# generate SBOM
-syft adegoodyer/goblog:dev
+# generate sbom
+syft ghcr.io/adegoodyer/goblog:dev
 
-# publish image
-d logout && d login --username=adegoodyer
-d push adegoodyer/goblog --all-tags
+# create PAT
+# Profile > Settings > Developer Settings (right at bottom) > PAT
+# https://github.com/settings/apps
+# classic token
+# write:packages
+# read:packages
+# delete:packages
+
+# export pat
+export GH_PAT='<pat-token>'
+
+# authenticate to ghcr
+echo $GH_PAT | docker login ghcr.io -u adegoodyer --password-stdin
+
+# push image to ghcr
+d push ghcr.io/adegoodyer/goblog --all-tags
 ```
 
 ## Sec Scan
